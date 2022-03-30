@@ -297,8 +297,3 @@ while inputString != "x":
 
     inputString = input("Input a one-word animal (\"x\" to stop): ")
     current = encyclopedia
-
-
-    
-    
-        
