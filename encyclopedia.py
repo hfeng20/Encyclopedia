@@ -1,3 +1,6 @@
+import random
+import math
+
 words = [
     "Aardvark",
     "Albatross",
@@ -222,11 +225,17 @@ words = [
     "Zebra"
 ]
 
+# autocomplete
+
+for i in range(len(words)):
+    words[i] = words[i].lower()
+
 class Tree:
     def __init__(self, val):
         self.val = val
         self.children = []
         self.childValues = []
+        self.isEnd = False
     
     def addChild(self, childTree):
         self.children.append(childTree)
@@ -249,20 +258,43 @@ for animal in words:
             child = Tree(letter)
             current.addChild(child)
             current = child
+    current.isEnd = True
     current = encyclopedia
 inputString = input("Input a one-word animal (\"x\" to stop): ")
 while inputString != "x":
+    if len(inputString) < 1:
+        print("Invalid entry.")
+        inputString = input("Input a one-word animal (\"x\" to stop): ")
+        current = encyclopedia
+        continue
+    inputString = inputString.lower()
     isAnimal = True
-    for letter in inputString:
-        if not current.hasChild(letter):
+    animal = None
+    for letterIndex in range(len(inputString)):
+        if not current.hasChild(inputString[letterIndex]):
             isAnimal = False
+            animal = inputString[:letterIndex]
+            while len(current.children) > 0:
+                index = random.randint(0, len(current.children) - 1)
+                animal += current.childValues[index]
+                current = current.children[index]
             break
         else:
-            current = current.children[current.childValues.index(letter)]
-    if isAnimal:
+            current = current.children[current.childValues.index(inputString[letterIndex])]
+    if isAnimal and current.isEnd:
         print("Is an animal.")
+    elif not current.isEnd:
+        animal = inputString[:letterIndex + 1]
+        while len(current.children) > 0:
+            index = random.randint(0, len(current.children) - 1)
+            animal = (animal + current.childValues[index])
+            current = current.children[index]
+        print("Not an animal. Did you mean " + animal.capitalize() + "?")
     else:
-        print("Not an animal.")
+        print("Not an animal. Did you mean " + animal.capitalize() + "?")
+
+
+
     inputString = input("Input a one-word animal (\"x\" to stop): ")
     current = encyclopedia
 
